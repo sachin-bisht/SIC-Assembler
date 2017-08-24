@@ -46,10 +46,27 @@ void labelAndAddress()
     while(1)
     {
         if(scanf("%c" , &ch) == EOF)
+        {
             break;
+        }
+
+        // If comment are present
+        if(ch == '.')
+        {
+            bool endofFile = false;
+            do{
+                if(scanf("%c", &ch) == EOF)
+                {
+                    endofFile = true;
+                    break;
+                }
+            }while(ch != '\n');
+            if(endofFile)
+                break;
+        }
 
         /* Store the values in structure (i.e.assembly_code) after each line */
-        if(ch == '\n')
+        else if(ch == '\n')
         {
             if(word.size() > 0)
             {
@@ -58,11 +75,6 @@ void labelAndAddress()
                 i += 1;
                 word = "";
             }
-            //cout << i << endl;
-            /*for(int j = 0; j < i; j++)
-                cout << info[j] << " ";
-            cout << endl;*/
-
             if(i == 3)
             {
                 assembly_code.push_back(make_pair(0, make_pair(info[0], make_pair(info[1], info[2]))));
@@ -91,7 +103,7 @@ void labelAndAddress()
                 }
                 else
                 {
-                    printf ("Cannot detect any opcode or byte or word or reserved (byte or word) instruction\n");
+                    assembly_code.push_back(make_pair(0, make_pair("-1", make_pair(info[0], info[1]))));
                 }
             }
             else
@@ -102,13 +114,10 @@ void labelAndAddress()
             info.clear();
             info.resize(3);
             i = 0;
-            //break;
-
         }
         /* Store each word after each space*/
         else if((ch == ' ' || ch == '\t') && word.size() > 0)
         {
-            //cout << "Word : " << word;
             info[i] = word;
             i += 1;
             word = "";
@@ -121,16 +130,17 @@ void labelAndAddress()
         }
     }
 
-
     return;
 }
 
 int main()
 {
+    assembly_code.clear();
     opcode_generator();
 
     labelAndAddress();
 
+    //cout << "size : " << assembly_code.size() << "\n";
     for(int i = 0 ; i < assembly_code.size(); i++)
     {
         cout << assembly_code[i].first << " ";
